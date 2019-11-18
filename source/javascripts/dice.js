@@ -5,12 +5,7 @@ class Die {
   }
 
   static roll(n) {
-    console.log("called roll")
     return 1 + Math.floor(Math.random() * Math.floor(n));
-  }
-
-  toString() {
-    return this.result.toString()
   }
 
   inspect() {
@@ -19,12 +14,26 @@ class Die {
       sides: this.sides,
     }
   }
+
+  // Leveraged by `parseInt`ing the dice in the tower below
+  toString() {
+    return this.result.toString()
+  }
 }
 
 class DiceTower {
   // Accepts an array of Die instances or modifiers
-  constructor(dice) {
+  constructor(dice, options) {
     this.dice = dice || []
+    this.options = options || {}
+  }
+
+  inspect() {
+    return {
+      dice: this.dice,
+      options: this.options,
+      total: this.total,
+    }
   }
 
   total() {

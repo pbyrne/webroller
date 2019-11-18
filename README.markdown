@@ -25,3 +25,7 @@ TODOs
 * [ ] Toggle dice type between D&D 5E/d20 and DCO
 * [ ] Implement advantage and challenge dice rolling
 * [ ] Implement named presets for DCO
+
+### Stretch goals
+
+* [ ] Subtract dice maybe?

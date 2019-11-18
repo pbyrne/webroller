@@ -1,2 +1,41 @@
 ---
 ---
+
+<h1>Web Dice Roller</h1>
+
+<section id="modify-tower">
+  <h2>Add dice</h2>
+  <form>
+    <% [4, 6, 8, 10, 12, 20].each do |sides| %>
+      <button data-add-dn="<%= sides %>" disabled>
+        Add d<%= sides %>
+      </button>
+    <% end %>
+  </form>
+
+
+  <h2>Modifier</h2>
+  <div data-contents="modifier"></div>
+</section>
+
+<section id="tower">
+  <h2>Tower</h2>
+
+  <div data-contents></div>
+</section>
+
+<section id="ticker">
+  <h2>Results</h2>
+
+  <div data-contents></div>
+</section>
+
+<script>
+  $.ready(() => {
+    window.roller = new Roller({
+      interface: document.getElementById("modify-tower"),
+      tower: document.getElementById("tower"),
+      ticker: document.getElementById("ticker"),
+    })
+  })
+</script>
