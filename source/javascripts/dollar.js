@@ -33,6 +33,8 @@ $.createElement = (tag, attributes) => {
   return element
 }
 
+$.sortNumerically = (a, b) => a - b
+
 $.ready = (fn) => {
   document.addEventListener("DOMContentLoaded", fn)
 

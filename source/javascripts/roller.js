@@ -46,9 +46,10 @@ class TowerController {
   get orderedDiceGroups() {
     console.log("Grouping…")
     const groups = new Map()
-    const keys = []
+    // Duping so that we don't change order as entered
+    const dupedDice = this.diceTower.dice.map(x => x).sort($.sortNumerically)
 
-    this.diceTower.dice.forEach((die) => {
+    dupedDice.forEach((die) => {
       const key = die.sides
       const collection = groups.get(key)
 
@@ -57,13 +58,9 @@ class TowerController {
       } else {
         groups.set(key, [die])
       }
-
-      if (keys.indexOf(key) == -1) {
-        keys.push(key)
-      }
     })
 
-    return {groups: groups, sortedKeys: keys.sort((a, b) => a - b)}
+    return groups
   }
 
   repaint() {
@@ -72,9 +69,8 @@ class TowerController {
 
     const ordered = this.orderedDiceGroups
     const notations = []
-    ordered.sortedKeys.forEach((key) => {
-      const count = ordered.groups.get(key).length
-      notations.push(`${count}d${key}`)
+    ordered.forEach((dice, sides) => {
+      notations.push(`${dice.length}d${sides}`)
     })
 
     const p = $.createElement("p", {
