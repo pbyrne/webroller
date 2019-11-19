@@ -1,6 +1,14 @@
-var selector = (query) => document.querySelectorAll(query)
+var selector = (query, parent) => {
+  return (parent || document).querySelectorAll(query)
+}
 
 window.$ = selector.bind(document)
+
+$.clear = (node) => {
+  while(node.firstChild) {
+    node.firstChild.remove()
+  }
+}
 
 $.createElement = (tag, attributes) => {
   attributes = attributes || {}
@@ -37,7 +45,12 @@ $.ready = (fn) => {
 Node.prototype.on = function(name, fn) {
   this.addEventListener(name, fn)
 }
-Node.prototype.$ = selector.bind(this)
+Node.prototype.$ = function(query) {
+  return selector(query, this)
+}
 NodeList.prototype.on = function(name, fn) {
   this.forEach((elem) => elem.on(name, fn))
+}
+NodeList.prototype.first = function() {
+  return this.item(0)
 }

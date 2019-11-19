@@ -7,7 +7,7 @@
   <h2>Add dice</h2>
   <form>
     <% [4, 6, 8, 10, 12, 20].each do |sides| %>
-      <button data-add-dn="<%= sides %>" disabled>
+      <button data-add-d-n="<%= sides %>" disabled>
         Add d<%= sides %>
       </button>
     <% end %>
@@ -16,6 +16,8 @@
 
   <h2>Modifier</h2>
   <div data-contents="modifier"></div>
+
+  <button data-trigger="roll" disabled>Roll</button>
 </section>
 
 <section id="tower">
@@ -33,9 +35,10 @@
 <script>
   $.ready(() => {
     window.roller = new Roller({
-      interface: document.getElementById("modify-tower"),
-      tower: document.getElementById("tower"),
+      diceTower: new DiceTower(),
       ticker: document.getElementById("ticker"),
+      towerDisplay: document.getElementById("tower"),
+      towerInterface: document.getElementById("modify-tower"),
     })
   })
 </script>

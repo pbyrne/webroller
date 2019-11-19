@@ -36,6 +36,10 @@ class DiceTower {
     }
   }
 
+  add(die) {
+    this.dice.push(die)
+  }
+
   total() {
     return this.dice.reduce((acc, die) => acc + parseInt(die), 0)
   }
