@@ -1,8 +1,8 @@
-var selector = (query, parent) => {
+var selectAll = (query, parent) => {
   return (parent || document).querySelectorAll(query)
 }
 
-window.$ = selector.bind(document)
+window.$ = selectAll.bind(document)
 
 $.clear = (node) => {
   while(node.firstChild) {
@@ -48,8 +48,9 @@ Node.prototype.on = function(name, fn) {
   this.addEventListener(name, fn)
 }
 Node.prototype.$ = function(query) {
-  return selector(query, this)
+  return selectAll(query, this)
 }
+
 NodeList.prototype.on = function(name, fn) {
   this.forEach((elem) => elem.on(name, fn))
 }

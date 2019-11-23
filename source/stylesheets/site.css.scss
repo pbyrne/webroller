@@ -1,1 +1,10 @@
+[data-contents] {
+  .result {
+    transition: 2s ease-in-out all;
 
+    &.highlight {
+      background-color: yellow;
+      transition: none;
+    }
+  }
+}

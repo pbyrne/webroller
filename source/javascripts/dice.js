@@ -1,23 +1,10 @@
 class Die {
   constructor(sides) {
-    this.result = Die.roll(sides)
     this.sides = sides
   }
 
-  static roll(n) {
-    return 1 + Math.floor(Math.random() * Math.floor(n));
-  }
-
-  inspect() {
-    return {
-      result: this.result,
-      sides: this.sides,
-    }
-  }
-
-  // Leveraged by `parseInt`ing the dice in the tower below
-  toString() {
-    return this.result.toString()
+  roll() {
+    return 1 + Math.floor(Math.random() * Math.floor(this.sides));
   }
 }
 
@@ -28,19 +15,69 @@ class DiceTower {
     this.options = options || {}
   }
 
-  inspect() {
-    return {
-      dice: this.dice,
-      options: this.options,
-      total: this.total,
-    }
+  get notations() {
+    const ns = []
+
+    this.orderedDiceGroups.forEach((dice, sides) => {
+      ns.push(`${dice.length}d${sides}`)
+    })
+
+    return ns
+  }
+
+  get orderedDiceGroups() {
+    // Duping so that we don't change order as entered
+    const dupedDice = this.dice.map(x => x).sort($.sortNumerically)
+    const groups = new Map()
+
+    dupedDice.forEach((die) => {
+      const key = die.sides
+      const collection = groups.get(key)
+
+      if (collection) {
+        collection.push(die)
+      } else {
+        groups.set(key, [die])
+      }
+    })
+
+    return groups
   }
 
   add(die) {
     this.dice.push(die)
   }
 
-  total() {
-    return this.dice.reduce((acc, die) => acc + parseInt(die), 0)
+  clear() {
+    this.dice.length = 0
+  }
+
+  roll() {
+    const rolls = this.dice.map((die) => new DieRoll(die))
+    return new DiceRoll({
+      rolls: rolls,
+      notations: this.notations,
+    })
+  }
+}
+
+// A single die's roll
+class DieRoll {
+  constructor(die) {
+    this.die = die
+    this.result = die.roll()
+  }
+}
+
+// Collection of DieRoll instances
+class DiceRoll {
+  constructor(options) {
+    this.rolls = options.rolls
+    this.notations = options.notations
+    this.total = this.calculateTotal()
+  }
+
+  calculateTotal() {
+    return this.rolls.reduce((acc, roll) => acc + roll.result, 0)
   }
 }

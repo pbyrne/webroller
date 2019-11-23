@@ -1,6 +1,6 @@
 class Roller {
   constructor(options) {
-    this.options = options 
+    this.options = options
 
     this.diceTower = options.diceTower
     this.ticker = options.ticker
@@ -8,6 +8,7 @@ class Roller {
     this.towerInterface = options.towerInterface
 
     this.addButtons = this.towerInterface.$("button[data-add-d-n]")
+    this.clearButtons = this.towerInterface.$("button[data-trigger=clear]")
     this.rollButtons = this.towerInterface.$("button[data-trigger=roll]")
 
     this.towerController = new TowerController({
@@ -15,13 +16,21 @@ class Roller {
       diceTower: this.diceTower,
     })
 
-    this.bindEventListeners()
+    this.tickerController = new TickerController({
+      container: this.ticker,
+    })
+
+    this._bindEventListeners()
   }
 
-  bindEventListeners() {
+  _bindEventListeners() {
     this.addButtons.forEach(button => button.disabled = false)
     this.addButtons.on("click", event => this.addDie(event))
-    this.rollButtons.on("click", this.roll)
+
+    this.clearButtons.on("click", (event) => this.clear(event))
+
+    this.rollButtons.forEach(button => button.disabled = false)
+    this.rollButtons.on("click", (event) => this.roll(event))
   }
 
   addDie(event) {
@@ -31,8 +40,16 @@ class Roller {
     this.towerController.repaint()
   }
 
-  roll() {
-    this.tickerController.add()
+  clear(event) {
+    event.preventDefault()
+    this.diceTower.clear()
+    this.towerController.repaint()
+  }
+
+  roll(event) {
+    event.preventDefault()
+    const result = this.diceTower.roll()
+    this.tickerController.add(result)
   }
 }
 
@@ -43,39 +60,31 @@ class TowerController {
     this.diceTower = options.diceTower
   }
 
-  get orderedDiceGroups() {
-    console.log("Grouping…")
-    const groups = new Map()
-    // Duping so that we don't change order as entered
-    const dupedDice = this.diceTower.dice.map(x => x).sort($.sortNumerically)
-
-    dupedDice.forEach((die) => {
-      const key = die.sides
-      const collection = groups.get(key)
-
-      if (collection) {
-        collection.push(die)
-      } else {
-        groups.set(key, [die])
-      }
-    })
-
-    return groups
-  }
-
   repaint() {
     console.log("Repainting…")
     $.clear(this.contents)
 
-    const ordered = this.orderedDiceGroups
-    const notations = []
-    ordered.forEach((dice, sides) => {
-      notations.push(`${dice.length}d${sides}`)
-    })
-
     const p = $.createElement("p", {
-      text: notations.join("+"),
+      text: this.diceTower.notations.join("+"),
     })
     this.contents.appendChild(p)
+  }
+}
+
+class TickerController {
+  constructor(options) {
+    this.container = options.container
+    this.contents = this.container.$("div[data-contents]").first()
+  }
+
+  add(result) {
+    console.log("TickerController.add", result)
+    const text = `${result.notations.join("+")}: ${result.total}`
+    const p = $.createElement("p", {
+      class: "result highlight",
+      text: text,
+    })
+    this.contents.prepend(p)
+    setTimeout(() => p.classList.remove("highlight"))
   }
 }
